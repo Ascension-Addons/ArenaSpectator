@@ -1,3 +1,3 @@
-# Addon Name
+# Arena Spectator
 
-This is the repository for <Addon Name>. Modified for Ascension.gg. 
+This is the repository for ArenaSpectator. Modified for Ascension.gg. 
