@@ -131,20 +131,6 @@ local SIZE = {
 --                                              --
 --------------------------------------------------
 
--- Each class icon coordinates in Interface\\Glues\\CharacterCreate\\UI-CharacterCreate-Classes
-local _CLASS_ICON_TCOORDS = {
- ["WARRIOR"] = {0, 0.25, 0, 0.25},
- ["MAGE"] = {0.25, 0.49609375, 0, 0.25},
- ["ROGUE"] = {0.49609375, 0.7421875, 0, 0.25},
- ["DRUID"] = {0.7421875, 0.98828125, 0, 0.25},
- ["HUNTER"] = {0, 0.25, 0.25, 0.5},
- ["SHAMAN"] = {0.25, 0.49609375, 0.25, 0.5},
- ["PRIEST"] = {0.49609375, 0.7421875, 0.25, 0.5},
- ["WARLOCK"] = {0.7421875, 0.98828125, 0.25, 0.5},
- ["PALADIN"] = {0, 0.25, 0.5, 0.75},
- ["DEATHKNIGHT"] = {0.25, 0.49609375, 0.5, 0.75},
-}
-
 -- Table with all player data
 local players
 
@@ -351,31 +337,11 @@ else
     }
 end
 
+
+local IDToClass = table.invert(Enum.Class)
 -- Takes class ID (id) and gives text for texture positioning
 local function ClassToTexture(id)
-    if (id == 1) then -- warrior
-        return "WARRIOR"
-    elseif (id == 2) then -- paladin
-        return "PALADIN"
-    elseif (id == 3) then -- hunter
-        return "HUNTER"
-    elseif (id == 4) then -- rogue
-        return "ROGUE"
-    elseif (id == 5) then -- priest
-        return "PRIEST"
-    elseif (id == 6) then -- dk
-        return "DEATHKNIGHT"
-    elseif (id == 7) then -- sham
-        return "SHAMAN"
-    elseif (id == 8) then -- mage
-        return "MAGE"
-    elseif (id == 9) then -- lock
-        return "WARLOCK"
-    elseif (id == 11) then -- druid
-        return "DRUID"
-    else
-        return "WARRIOR"
-    end
+    return IDToClass[id]
 end
 
 -- Realigns all small frames
@@ -779,8 +745,8 @@ local function CreateFrameForPlayer(p)
     cla:SetPoint("LEFT", f, "LEFT", 2, -2)
     cla.texture = cla:CreateTexture(nil, "ARTWORK")
     cla.texture:SetAllPoints(cla)
-    cla.texture:SetTexture("Interface\\Glues\\CharacterCreate\\UI-CharacterCreate-Classes")
-    cla.texture:SetTexCoord(unpack(_CLASS_ICON_TCOORDS["WARRIOR"]))
+    cla.texture:SetTexture("Interface\\Glues\\CharacterCreate\\-UI-CharacterCreate-Classes")
+    cla.texture:SetTexCoord(unpack(CLASS_ICON_TCORDS["WARRIOR"]))
     
     local hp = CreateFrame("StatusBar", nil, f)
     hp:SetWidth(SIZE.SMALL.WIDTH - SIZE.SMALL.HEIGHT - 2)
@@ -899,8 +865,8 @@ local function CreateFrameForPlayer(p)
     scla:SetPoint("TOPLEFT", sf, "TOPLEFT", 2, -2)
     scla.texture = scla:CreateTexture("ARTWORK")
     scla.texture:SetAllPoints(scla)
-    scla.texture:SetTexture("Interface\\Glues\\CharacterCreate\\UI-CharacterCreate-Classes")
-    scla.texture:SetTexCoord(unpack(_CLASS_ICON_TCOORDS["WARRIOR"]))
+    scla.texture:SetTexture("Interface\\Glues\\CharacterCreate\\-UI-CharacterCreate-Classes")
+    scla.texture:SetTexCoord(unpack(CLASS_ICON_TCOORDS["WARRIOR"]))
     
     local shp = CreateFrame("StatusBar", nil, sf)
     shp:SetWidth(SIZE.BIG.WIDTH - SIZE.BIG.HEIGHT - 2)
@@ -1002,8 +968,8 @@ local function CreateFrameForPlayer(p)
     tcla:SetPoint("TOPRIGHT", tf, "TOPRIGHT", -2, -2)
     tcla.texture = tcla:CreateTexture("ARTWORK")
     tcla.texture:SetAllPoints(tcla)
-    tcla.texture:SetTexture("Interface\\Glues\\CharacterCreate\\UI-CharacterCreate-Classes")
-    tcla.texture:SetTexCoord(unpack(_CLASS_ICON_TCOORDS["WARRIOR"]))
+    tcla.texture:SetTexture("Interface\\Glues\\CharacterCreate\\-UI-CharacterCreate-Classes")
+    tcla.texture:SetTexCoord(unpack(CLASS_ICON_TCOORDS["WARRIOR"]))
     
     local thp = CreateFrame("StatusBar", nil, tf)
     thp:SetWidth(SIZE.BIG.WIDTH - SIZE.BIG.HEIGHT - 2)
@@ -1281,13 +1247,17 @@ local function RedrawClassIcon(pla)
     end
 
     if (highaura == nil) then
-        texturepath = "Interface\\Glues\\CharacterCreate\\UI-CharacterCreate-Classes"
+        texturepath = "Interface\\Glues\\CharacterCreate\\-UI-CharacterCreate-Classes"
         for _, barname in pairs(ALLBARS) do
             players[pla][barname].class.texture:SetTexture(texturepath)
             players[pla][barname].class.texture:SetTexCoord(0,1,0,1)
-            local t = _CLASS_ICON_TCOORDS[ClassToTexture(players[pla].class)]
+            local t = CLASS_ICON_TCOORDS[ClassToTexture(players[pla].class)]
             if t then
-                players[pla][barname].class.texture:SetTexture([[Interface\Glues\CharacterCreate\UI-CharacterCreate-Classes]])
+                if players[pla].class > Enum.Class.DRUID then
+                    players[pla][barname].class.texture:SetTexture([[Interface\Glues\CharacterCreate\UI-CharacterCreate-Classes]])
+                else
+                    players[pla][barname].class.texture:SetTexture([[Interface\Glues\CharacterCreate\-UI-CharacterCreate-Classes]])
+                end
                 local left, right, top, bottom = unpack(t)
                 left = left + (right - left) * 0.08; right = right - (right - left) * 0.08; top = top + (bottom - top) * 0.08; bottom = bottom - (bottom - top) * 0.08
                 players[pla][barname].class.texture:SetTexCoord(left, right, top, bottom)
